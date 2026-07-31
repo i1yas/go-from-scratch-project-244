@@ -12,21 +12,52 @@ import (
 )
 
 func TestGenDiff(t *testing.T) {
-	input1, err := getFixturePath(t, "test1.json")
-	require.NoError(t, err)
+	t.Run("basic", func(t *testing.T) {
+		input1, err := getFixturePath(t, "test1.json")
+		require.NoError(t, err)
 
-	input2, err := getFixturePath(t, "test2.json")
-	require.NoError(t, err)
+		input2, err := getFixturePath(t, "test2.json")
+		require.NoError(t, err)
 
-	wantData, err := loadFixture(t, "test1_test2_result.txt")
-	require.NoError(t, err)
+		wantData, err := loadFixture(t, "test1_test2_result.txt")
+		require.NoError(t, err)
 
-	want := strings.TrimSpace(string(wantData))
+		want := strings.TrimSpace(string(wantData))
 
-	got, err := GenDiff(input1, input2)
-	require.NoError(t, err)
+		got, err := GenDiff(input1, input2)
+		require.NoError(t, err)
 
-	assert.Equal(t, string(want), got)
+		assert.Equal(t, string(want), got)
+	})
+
+	t.Run("file does not exist", func(t *testing.T) {
+		badInput, err := getFixturePath(t, "this_file_does_not_exist")
+		require.NoError(t, err)
+
+		input, err := getFixturePath(t, "test1.json")
+		require.NoError(t, err)
+
+		_, err = GenDiff(badInput, input)
+		require.Error(t, err)
+
+		_, err = GenDiff(input, badInput)
+		require.Error(t, err)
+	})
+
+	t.Run("path is not file", func(t *testing.T) {
+		badInput, err := getFixturePath(t, ".")
+		require.NoError(t, err)
+
+		input, err := getFixturePath(t, "test1.json")
+		require.NoError(t, err)
+
+		_, err = GenDiff(badInput, input)
+		require.Error(t, err)
+
+		_, err = GenDiff(input, badInput)
+		require.Error(t, err)
+	})
+
 }
 
 func getFixturePath(t *testing.T, name string) (string, error) {
