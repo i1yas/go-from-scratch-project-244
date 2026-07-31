@@ -6,6 +6,7 @@ import (
 	"strings"
 )
 
+// GetDiff returns string with json-like diff report
 func GetDiff(a, b map[string]any) string {
 	var sb strings.Builder
 
