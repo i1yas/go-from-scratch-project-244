@@ -30,7 +30,7 @@ func GetDiff(a, b map[string]any) string {
 		v2, ok2 := b[k]
 
 		if !ok1 {
-			sb.WriteString("  - ")
+			sb.WriteString("  + ")
 			fmt.Fprintf(&sb, "%s: %v", k, v2)
 			sb.WriteString("\n")
 
