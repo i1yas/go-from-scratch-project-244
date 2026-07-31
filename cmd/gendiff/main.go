@@ -1,8 +1,6 @@
 package main
 
 import (
-	"code/internal/diff"
-	"code/internal/parser"
 	"context"
 	"errors"
 	"fmt"
@@ -10,6 +8,9 @@ import (
 	"path/filepath"
 
 	"github.com/urfave/cli/v3"
+
+	"code/internal/diff"
+	"code/internal/parser"
 )
 
 var (
@@ -65,7 +66,6 @@ func main() {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
-
 }
 
 func readFileFromArgument(arg string) ([]byte, error) {

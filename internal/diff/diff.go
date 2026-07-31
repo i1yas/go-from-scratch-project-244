@@ -15,6 +15,7 @@ func GetDiff(a, b map[string]any) string {
 	for k := range a {
 		keys = append(keys, k)
 	}
+
 	for k := range b {
 		if !slices.Contains(keys, k) {
 			keys = append(keys, k)
@@ -31,6 +32,7 @@ func GetDiff(a, b map[string]any) string {
 			sb.WriteString("  - ")
 			sb.WriteString(fmt.Sprintf("%s: %v", k, v2))
 			sb.WriteString("\n")
+
 			continue
 		}
 
@@ -38,6 +40,7 @@ func GetDiff(a, b map[string]any) string {
 			sb.WriteString("  - ")
 			sb.WriteString(fmt.Sprintf("%s: %v", k, v1))
 			sb.WriteString("\n")
+
 			continue
 		}
 
@@ -49,6 +52,7 @@ func GetDiff(a, b map[string]any) string {
 			sb.WriteString("  + ")
 			sb.WriteString(fmt.Sprintf("%s: %v", k, v2))
 			sb.WriteString("\n")
+
 			continue
 		}
 
