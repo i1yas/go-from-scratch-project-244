@@ -1,6 +1,7 @@
 package main
 
 import (
+	"code/internal/diff"
 	"code/internal/parser"
 	"context"
 	"errors"
@@ -54,9 +55,7 @@ func main() {
 				return err
 			}
 
-			fmt.Println("SUCCESS")
-			fmt.Printf("parsed1=%v\n", parsed1)
-			fmt.Printf("parsed2=%v\n", parsed2)
+			fmt.Println(diff.GetDiff(parsed1, parsed2))
 
 			return nil
 		},
