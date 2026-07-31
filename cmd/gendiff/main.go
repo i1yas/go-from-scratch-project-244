@@ -10,10 +10,19 @@ import (
 
 func main() {
 	cmd := &cli.Command{
-		Name:  "gendiff",
-		Usage: "Compares two configuration files and shows a difference.",
+		Name:      "gendiff",
+		Usage:     "Compares two configuration files and shows a difference.",
+		ArgsUsage: "<path> <path>",
+		Flags: []cli.Flag{
+			&cli.StringFlag{
+				Name:        "format",
+				Usage:       "output format",
+				Aliases:     []string{"f"},
+				DefaultText: "stylish",
+			},
+		},
 		Action: func(_ context.Context, cmd *cli.Command) error {
-			fmt.Printf("TODO")
+			fmt.Printf("TODO\n")
 			return nil
 		},
 	}
