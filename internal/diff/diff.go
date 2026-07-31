@@ -31,7 +31,7 @@ func GetDiff(a, b map[string]any) string {
 
 		if !ok1 {
 			sb.WriteString("  - ")
-			sb.WriteString(fmt.Sprintf("%s: %v", k, v2))
+			fmt.Fprintf(&sb, "%s: %v", k, v2)
 			sb.WriteString("\n")
 
 			continue
@@ -39,7 +39,7 @@ func GetDiff(a, b map[string]any) string {
 
 		if !ok2 {
 			sb.WriteString("  - ")
-			sb.WriteString(fmt.Sprintf("%s: %v", k, v1))
+			fmt.Fprintf(&sb, "%s: %v", k, v1)
 			sb.WriteString("\n")
 
 			continue
@@ -47,18 +47,18 @@ func GetDiff(a, b map[string]any) string {
 
 		if v1 != v2 {
 			sb.WriteString("  - ")
-			sb.WriteString(fmt.Sprintf("%s: %v", k, v1))
+			fmt.Fprintf(&sb, "%s: %v", k, v1)
 			sb.WriteString("\n")
 
 			sb.WriteString("  + ")
-			sb.WriteString(fmt.Sprintf("%s: %v", k, v2))
+			fmt.Fprintf(&sb, "%s: %v", k, v2)
 			sb.WriteString("\n")
 
 			continue
 		}
 
 		sb.WriteString("    ")
-		sb.WriteString(fmt.Sprintf("%s: %v", k, v1))
+		fmt.Fprintf(&sb, "%s: %v", k, v1)
 		sb.WriteString("\n")
 	}
 
