@@ -57,7 +57,6 @@ func TestGenDiff(t *testing.T) {
 		_, err = GenDiff(input, badInput)
 		require.Error(t, err)
 	})
-
 }
 
 func getFixturePath(t *testing.T, name string) (string, error) {

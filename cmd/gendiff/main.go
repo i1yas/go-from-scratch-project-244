@@ -6,14 +6,12 @@ import (
 	"fmt"
 	"os"
 
-	"code"
-
 	"github.com/urfave/cli/v3"
+
+	"code"
 )
 
-var (
-	ErrExpectingTwoPaths = errors.New("expecting 2 paths")
-)
+var ErrExpectingTwoPaths = errors.New("expecting 2 paths")
 
 func main() {
 	cmd := &cli.Command{
