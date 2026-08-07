@@ -9,8 +9,10 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+// ParserFormat format acceptable by parser
 type ParserFormat string
 
+// ParserFormat option
 const (
 	ParserFormatJSON    = "json"
 	ParserFormatYAML    = "yaml"
