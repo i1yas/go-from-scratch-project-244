@@ -9,25 +9,25 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// ParserFormat format acceptable by parser
-type ParserFormat string
+// Foramt format acceptable by parser
+type Foramt string
 
-// ParserFormat option
+// Foramt option
 const (
-	ParserFormatJSON    = "json"
-	ParserFormatYAML    = "yaml"
-	ParserFormatUnknown = "unknown"
+	ForamtJSON    = "json"
+	ForamtYAML    = "yaml"
+	ForamtUnknown = "unknown"
 )
 
 var ErrUnsupportedFormat = errors.New("unsupported format")
 
 // Parse parses file content
-func Parse(fileContent []byte, format ParserFormat) (map[string]any, error) {
-	if format == ParserFormatJSON {
+func Parse(fileContent []byte, format Foramt) (map[string]any, error) {
+	if format == ForamtJSON {
 		return parseJSON(fileContent)
 	}
 
-	if format == ParserFormatYAML {
+	if format == ForamtYAML {
 		return parseYAML(fileContent)
 	}
 
@@ -57,15 +57,15 @@ func parseYAML(fileContent []byte) (map[string]any, error) {
 }
 
 // DeduceFormatFromPath takes path with file extension and determines format from it.
-func DeduceFormatFromPath(path string) (ParserFormat, error) {
+func DeduceFormatFromPath(path string) (Foramt, error) {
 	ext := filepath.Ext(path)
 
 	switch ext {
 	case ".json":
-		return ParserFormatJSON, nil
+		return ForamtJSON, nil
 	case ".yaml", ".yml":
-		return ParserFormatYAML, nil
+		return ForamtYAML, nil
 	default:
-		return ParserFormatUnknown, fmt.Errorf("%w: %s", ErrUnsupportedFormat, ext)
+		return ForamtUnknown, fmt.Errorf("%w: %s", ErrUnsupportedFormat, ext)
 	}
 }
