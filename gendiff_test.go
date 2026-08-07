@@ -13,13 +13,13 @@ import (
 
 func TestGenDiff(t *testing.T) {
 	t.Run("basic json", func(t *testing.T) {
-		input1, err := getFixturePath(t, "test1.json")
+		input1, err := getFixturePath(t, "flat1.json")
 		require.NoError(t, err)
 
-		input2, err := getFixturePath(t, "test2.json")
+		input2, err := getFixturePath(t, "flat2.json")
 		require.NoError(t, err)
 
-		wantData, err := loadFixture(t, "test1_test2_result.txt")
+		wantData, err := loadFixture(t, "flat1_flat2_result.txt")
 		require.NoError(t, err)
 
 		want := strings.TrimSpace(string(wantData))
@@ -31,13 +31,13 @@ func TestGenDiff(t *testing.T) {
 	})
 
 	t.Run("basic yaml", func(t *testing.T) {
-		input1, err := getFixturePath(t, "test1.yaml")
+		input1, err := getFixturePath(t, "flat1.yaml")
 		require.NoError(t, err)
 
-		input2, err := getFixturePath(t, "test2.yaml")
+		input2, err := getFixturePath(t, "flat2.yaml")
 		require.NoError(t, err)
 
-		wantData, err := loadFixture(t, "test1_test2_result.txt")
+		wantData, err := loadFixture(t, "flat1_flat2_result.txt")
 		require.NoError(t, err)
 
 		want := strings.TrimSpace(string(wantData))
@@ -52,7 +52,7 @@ func TestGenDiff(t *testing.T) {
 		badInput, err := getFixturePath(t, "this_file_does_not_exist")
 		require.NoError(t, err)
 
-		input, err := getFixturePath(t, "test1.json")
+		input, err := getFixturePath(t, "flat1.json")
 		require.NoError(t, err)
 
 		_, err = GenDiff(badInput, input)
@@ -66,7 +66,7 @@ func TestGenDiff(t *testing.T) {
 		badInput, err := getFixturePath(t, ".")
 		require.NoError(t, err)
 
-		input, err := getFixturePath(t, "test1.json")
+		input, err := getFixturePath(t, "flat1.json")
 		require.NoError(t, err)
 
 		_, err = GenDiff(badInput, input)
