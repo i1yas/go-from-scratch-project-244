@@ -24,9 +24,10 @@ func GenDiff(path1 string, path2 string) (string, error) {
 		return "", err
 	}
 
-	diff := diff.GetDiff(parsed1, parsed2)
+	diffRaw := diff.ComputeDiff(parsed1, parsed2)
+	diffFormatted := diff.FormatDiff(diffRaw)
 
-	return diff, nil
+	return diffFormatted, nil
 }
 
 func parseFileFromArgument(arg string) (map[string]any, error) {

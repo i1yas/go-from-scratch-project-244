@@ -6,11 +6,26 @@ import (
 	"strings"
 )
 
-// GetDiff returns string with json-like diff report
-func GetDiff(a, b map[string]any) string {
-	var sb strings.Builder
+// ItemChange represents one of possible changes: add, remove, no change.
+type ItemChange int
 
-	sb.WriteString("{\n")
+// ItemChange option
+const (
+	ItemChangeNone = iota
+	ItemChangeAdd
+	ItemChangeRemove
+)
+
+// Item is item of internal diff representation
+type Item struct {
+	key    string
+	value  any
+	change ItemChange
+}
+
+// ComputeDiff computes diff and returns internal representation
+func ComputeDiff(a, b map[string]any) []Item {
+	result := make([]Item, 0, len(a)+len(b))
 
 	keys := make([]string, 0, len(a)+len(b))
 	for k := range a {
@@ -30,39 +45,79 @@ func GetDiff(a, b map[string]any) string {
 		v2, ok2 := b[k]
 
 		if !ok1 {
-			sb.WriteString("  + ")
-			fmt.Fprintf(&sb, "%s: %v", k, v2)
-			sb.WriteString("\n")
+			result = append(result, Item{
+				key:    k,
+				value:  v2,
+				change: ItemChangeAdd,
+			})
 
 			continue
 		}
 
 		if !ok2 {
-			sb.WriteString("  - ")
-			fmt.Fprintf(&sb, "%s: %v", k, v1)
-			sb.WriteString("\n")
+			result = append(result, Item{
+				key:    k,
+				value:  v1,
+				change: ItemChangeRemove,
+			})
 
 			continue
 		}
 
 		if v1 != v2 {
-			sb.WriteString("  - ")
-			fmt.Fprintf(&sb, "%s: %v", k, v1)
-			sb.WriteString("\n")
+			result = append(result, Item{
+				key:    k,
+				value:  v1,
+				change: ItemChangeRemove,
+			})
 
-			sb.WriteString("  + ")
-			fmt.Fprintf(&sb, "%s: %v", k, v2)
-			sb.WriteString("\n")
+			result = append(result, Item{
+				key:    k,
+				value:  v2,
+				change: ItemChangeAdd,
+			})
 
 			continue
 		}
 
-		sb.WriteString("    ")
-		fmt.Fprintf(&sb, "%s: %v", k, v1)
+		result = append(result, Item{
+			key:    k,
+			value:  v1,
+			change: ItemChangeNone,
+		})
+	}
+
+	return result
+}
+
+// FormatDiff takes internal diff representation and output formatted string
+func FormatDiff(diff []Item) string {
+	var sb strings.Builder
+
+	sb.WriteString("{\n")
+
+	for _, item := range diff {
+		sb.WriteString("  ")
+		sb.WriteString(getChangeSymbol(item.change))
+		sb.WriteString(" ")
+		fmt.Fprintf(&sb, "%s: %v", item.key, item.value)
 		sb.WriteString("\n")
 	}
 
 	sb.WriteString("}")
 
 	return sb.String()
+}
+
+func getChangeSymbol(change ItemChange) string {
+	switch change {
+	case ItemChangeAdd:
+		return "+"
+	case ItemChangeRemove:
+		return "-"
+	case ItemChangeNone:
+		return " "
+	default:
+		return " "
+	}
 }
