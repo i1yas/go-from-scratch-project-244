@@ -1,5 +1,5 @@
 build:
-	go build -o bin/gen-diff ./cmd/gen-diff
+	go build -o bin/gendiff ./cmd/gendiff
 
 lint:
 	golangci-lint run
