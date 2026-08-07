@@ -12,11 +12,29 @@ import (
 )
 
 func TestGenDiff(t *testing.T) {
-	t.Run("basic", func(t *testing.T) {
+	t.Run("basic json", func(t *testing.T) {
 		input1, err := getFixturePath(t, "test1.json")
 		require.NoError(t, err)
 
 		input2, err := getFixturePath(t, "test2.json")
+		require.NoError(t, err)
+
+		wantData, err := loadFixture(t, "test1_test2_result.txt")
+		require.NoError(t, err)
+
+		want := strings.TrimSpace(string(wantData))
+
+		got, err := GenDiff(input1, input2)
+		require.NoError(t, err)
+
+		assert.Equal(t, string(want), got)
+	})
+
+	t.Run("basic yaml", func(t *testing.T) {
+		input1, err := getFixturePath(t, "test1.yaml")
+		require.NoError(t, err)
+
+		input2, err := getFixturePath(t, "test2.yaml")
 		require.NoError(t, err)
 
 		wantData, err := loadFixture(t, "test1_test2_result.txt")
