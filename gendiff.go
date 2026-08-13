@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 
 	"code/internal/diff"
+	"code/internal/formatters"
 	"code/internal/parser"
 )
 
@@ -26,7 +27,7 @@ func GenDiff(path1 string, path2 string, format string) (string, error) {
 
 	diffRaw := diff.ComputeDiff(parsed1, parsed2)
 
-	diffFormatted, err := diff.FormatDiff(diffRaw, format)
+	diffFormatted, err := formatters.FormatDiff(diffRaw, format)
 	if err != nil {
 		return "", err
 	}

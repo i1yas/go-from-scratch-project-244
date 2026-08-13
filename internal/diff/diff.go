@@ -17,10 +17,10 @@ const (
 
 // Item is item of internal diff representation
 type Item struct {
-	key    string
-	value  any
-	change ItemChange
-	nested *[]Item
+	Key    string
+	Value  any
+	Change ItemChange
+	Nested *[]Item
 }
 
 // ComputeDiff computes diff and returns internal representation
@@ -41,9 +41,9 @@ func computeMapsDiff(a, b map[string]any) []Item {
 
 		if !ok1 {
 			result = append(result, Item{
-				key:    k,
-				value:  v2,
-				change: ItemChangeAdd,
+				Key:    k,
+				Value:  v2,
+				Change: ItemChangeAdd,
 			})
 
 			continue
@@ -51,9 +51,9 @@ func computeMapsDiff(a, b map[string]any) []Item {
 
 		if !ok2 {
 			result = append(result, Item{
-				key:    k,
-				value:  v1,
-				change: ItemChangeRemove,
+				Key:    k,
+				Value:  v1,
+				Change: ItemChangeRemove,
 			})
 
 			continue
@@ -64,15 +64,15 @@ func computeMapsDiff(a, b map[string]any) []Item {
 
 		if kind1 != kind2 {
 			result = append(result, Item{
-				key:    k,
-				value:  v1,
-				change: ItemChangeRemove,
+				Key:    k,
+				Value:  v1,
+				Change: ItemChangeRemove,
 			})
 
 			result = append(result, Item{
-				key:    k,
-				value:  v2,
-				change: ItemChangeAdd,
+				Key:    k,
+				Value:  v2,
+				Change: ItemChangeAdd,
 			})
 
 			continue
@@ -83,8 +83,8 @@ func computeMapsDiff(a, b map[string]any) []Item {
 			map2 := v2.(map[string]any)
 			subDiff := computeMapsDiff(map1, map2)
 			result = append(result, Item{
-				key:    k,
-				nested: &subDiff,
+				Key:    k,
+				Nested: &subDiff,
 			})
 
 			continue
@@ -95,8 +95,8 @@ func computeMapsDiff(a, b map[string]any) []Item {
 			slice2 := v2.([]any)
 			subDiff := computeSlicesDiff(slice1, slice2)
 			result = append(result, Item{
-				key:    k,
-				nested: &subDiff,
+				Key:    k,
+				Nested: &subDiff,
 			})
 
 			continue
@@ -104,24 +104,24 @@ func computeMapsDiff(a, b map[string]any) []Item {
 
 		if v1 != v2 {
 			result = append(result, Item{
-				key:    k,
-				value:  v1,
-				change: ItemChangeRemove,
+				Key:    k,
+				Value:  v1,
+				Change: ItemChangeRemove,
 			})
 
 			result = append(result, Item{
-				key:    k,
-				value:  v2,
-				change: ItemChangeAdd,
+				Key:    k,
+				Value:  v2,
+				Change: ItemChangeAdd,
 			})
 
 			continue
 		}
 
 		result = append(result, Item{
-			key:    k,
-			value:  v1,
-			change: ItemChangeNone,
+			Key:    k,
+			Value:  v1,
+			Change: ItemChangeNone,
 		})
 	}
 

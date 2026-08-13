@@ -1,29 +1,17 @@
-package diff
+package stylish
 
 import (
+	"code/internal/diff"
 	"fmt"
 	"reflect"
 	"strings"
 )
 
-const (
-	FormatStylish = "stylish"
-)
-
-// FormatDiff takes internal diff representation and output formatted string
-func FormatDiff(diff []Item, format string) (string, error) {
-	if format == FormatStylish {
-		return formatStylish(diff), nil
-	}
-
-	return "", fmt.Errorf("Unsupported format: %s", format)
-}
-
-func formatStylish(diff []Item) string {
+func Format(diff []diff.Item) string {
 	return formatMapsDiff(diff, 0)
 }
 
-func formatMapsDiff(diff []Item, nesting int) string {
+func formatMapsDiff(diff []diff.Item, nesting int) string {
 	var sb strings.Builder
 
 	sb.WriteString("{\n")
@@ -31,13 +19,13 @@ func formatMapsDiff(diff []Item, nesting int) string {
 	for _, item := range diff {
 		sb.WriteString(strings.Repeat(" ", 4*nesting))
 		sb.WriteString("  ")
-		sb.WriteString(getChangeSymbol(item.change))
+		sb.WriteString(getChangeSymbol(item.Change))
 		sb.WriteString(" ")
 
-		if item.nested != nil {
-			fmt.Fprintf(&sb, "%s: %s", item.key, formatMapsDiff(*item.nested, nesting+1))
+		if item.Nested != nil {
+			fmt.Fprintf(&sb, "%s: %s", item.Key, formatMapsDiff(*item.Nested, nesting+1))
 		} else {
-			fmt.Fprintf(&sb, "%s: %s", item.key, formatValue(item.value, nesting+1))
+			fmt.Fprintf(&sb, "%s: %s", item.Key, formatValue(item.Value, nesting+1))
 		}
 
 		sb.WriteString("\n")
@@ -107,13 +95,13 @@ func formatSlice(value []any, nesting int) string {
 	return sb.String()
 }
 
-func getChangeSymbol(change ItemChange) string {
+func getChangeSymbol(change diff.ItemChange) string {
 	switch change {
-	case ItemChangeAdd:
+	case diff.ItemChangeAdd:
 		return "+"
-	case ItemChangeRemove:
+	case diff.ItemChangeRemove:
 		return "-"
-	case ItemChangeNone:
+	case diff.ItemChangeNone:
 		return " "
 	default:
 		return " "

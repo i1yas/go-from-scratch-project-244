@@ -1,7 +1,6 @@
 package code
 
 import (
-	"code/internal/diff"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -10,6 +9,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"code/internal/formatters"
 )
 
 func TestGenDiff(t *testing.T) {
@@ -25,7 +26,7 @@ func TestGenDiff(t *testing.T) {
 
 		want := strings.TrimSpace(string(wantData))
 
-		got, err := GenDiff(input1, input2, diff.FormatStylish)
+		got, err := GenDiff(input1, input2, formatters.FormatStylish)
 		require.NoError(t, err)
 
 		assert.Equal(t, string(want), got)
@@ -43,7 +44,7 @@ func TestGenDiff(t *testing.T) {
 
 		want := strings.TrimSpace(string(wantData))
 
-		got, err := GenDiff(input1, input2, diff.FormatStylish)
+		got, err := GenDiff(input1, input2, formatters.FormatStylish)
 		require.NoError(t, err)
 
 		assert.Equal(t, string(want), got)
@@ -56,10 +57,10 @@ func TestGenDiff(t *testing.T) {
 		input, err := getFixturePath(t, "nested1.json")
 		require.NoError(t, err)
 
-		_, err = GenDiff(badInput, input, diff.FormatStylish)
+		_, err = GenDiff(badInput, input, formatters.FormatStylish)
 		require.Error(t, err)
 
-		_, err = GenDiff(input, badInput, diff.FormatStylish)
+		_, err = GenDiff(input, badInput, formatters.FormatStylish)
 		require.Error(t, err)
 	})
 
@@ -70,10 +71,10 @@ func TestGenDiff(t *testing.T) {
 		input, err := getFixturePath(t, "nested1.json")
 		require.NoError(t, err)
 
-		_, err = GenDiff(badInput, input, diff.FormatStylish)
+		_, err = GenDiff(badInput, input, formatters.FormatStylish)
 		require.Error(t, err)
 
-		_, err = GenDiff(input, badInput, diff.FormatStylish)
+		_, err = GenDiff(input, badInput, formatters.FormatStylish)
 		require.Error(t, err)
 	})
 }

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"code/internal/diff"
 	"context"
 	"errors"
 	"fmt"
@@ -10,12 +9,13 @@ import (
 	"github.com/urfave/cli/v3"
 
 	"code"
+	"code/internal/formatters"
 )
 
 var ErrExpectingTwoPaths = errors.New("expecting 2 paths")
 
 func main() {
-	defaultFormat := diff.FormatStylish
+	defaultFormat := formatters.FormatStylish
 
 	cmd := &cli.Command{
 		Name:      "gendiff",
