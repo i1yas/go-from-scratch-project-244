@@ -1,9 +1,8 @@
 package diff
 
 import (
-	"fmt"
+	"reflect"
 	"slices"
-	"strings"
 )
 
 // ItemChange represents one of possible changes: add, remove, no change.
@@ -21,22 +20,18 @@ type Item struct {
 	key    string
 	value  any
 	change ItemChange
+	nested *[]Item
 }
 
 // ComputeDiff computes diff and returns internal representation
 func ComputeDiff(a, b map[string]any) []Item {
+	return computeMapsDiff(a, b)
+}
+
+func computeMapsDiff(a, b map[string]any) []Item {
 	result := make([]Item, 0, len(a)+len(b))
 
-	keys := make([]string, 0, len(a)+len(b))
-	for k := range a {
-		keys = append(keys, k)
-	}
-
-	for k := range b {
-		if !slices.Contains(keys, k) {
-			keys = append(keys, k)
-		}
-	}
+	keys := getJoinedKeys(a, b)
 
 	slices.Sort(keys)
 
@@ -59,6 +54,49 @@ func ComputeDiff(a, b map[string]any) []Item {
 				key:    k,
 				value:  v1,
 				change: ItemChangeRemove,
+			})
+
+			continue
+		}
+
+		kind1 := reflect.ValueOf(v1).Kind()
+		kind2 := reflect.ValueOf(v2).Kind()
+
+		if kind1 != kind2 {
+			result = append(result, Item{
+				key:    k,
+				value:  v1,
+				change: ItemChangeRemove,
+			})
+
+			result = append(result, Item{
+				key:    k,
+				value:  v2,
+				change: ItemChangeAdd,
+			})
+
+			continue
+		}
+
+		if kind1 == reflect.Map {
+			map1 := v1.(map[string]any)
+			map2 := v2.(map[string]any)
+			subDiff := computeMapsDiff(map1, map2)
+			result = append(result, Item{
+				key:    k,
+				nested: &subDiff,
+			})
+
+			continue
+		}
+
+		if kind1 == reflect.Slice {
+			slice1 := v1.([]any)
+			slice2 := v2.([]any)
+			subDiff := computeSlicesDiff(slice1, slice2)
+			result = append(result, Item{
+				key:    k,
+				nested: &subDiff,
 			})
 
 			continue
@@ -90,34 +128,26 @@ func ComputeDiff(a, b map[string]any) []Item {
 	return result
 }
 
-// FormatDiff takes internal diff representation and output formatted string
-func FormatDiff(diff []Item) string {
-	var sb strings.Builder
+func computeSlicesDiff(a, b []any) []Item {
+	result := make([]Item, 0, len(a)+len(b))
 
-	sb.WriteString("{\n")
+	// TODO
 
-	for _, item := range diff {
-		sb.WriteString("  ")
-		sb.WriteString(getChangeSymbol(item.change))
-		sb.WriteString(" ")
-		fmt.Fprintf(&sb, "%s: %v", item.key, item.value)
-		sb.WriteString("\n")
-	}
-
-	sb.WriteString("}")
-
-	return sb.String()
+	return result
 }
 
-func getChangeSymbol(change ItemChange) string {
-	switch change {
-	case ItemChangeAdd:
-		return "+"
-	case ItemChangeRemove:
-		return "-"
-	case ItemChangeNone:
-		return " "
-	default:
-		return " "
+func getJoinedKeys(a, b map[string]any) []string {
+	keys := make([]string, 0, len(a)+len(b))
+
+	for k := range a {
+		keys = append(keys, k)
 	}
+
+	for k := range b {
+		if !slices.Contains(keys, k) {
+			keys = append(keys, k)
+		}
+	}
+
+	return keys
 }

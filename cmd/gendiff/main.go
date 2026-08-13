@@ -1,6 +1,7 @@
 package main
 
 import (
+	"code/internal/diff"
 	"context"
 	"errors"
 	"fmt"
@@ -14,6 +15,8 @@ import (
 var ErrExpectingTwoPaths = errors.New("expecting 2 paths")
 
 func main() {
+	defaultFormat := diff.FormatStylish
+
 	cmd := &cli.Command{
 		Name:      "gendiff",
 		Usage:     "Compares two configuration files and shows a difference.",
@@ -23,7 +26,8 @@ func main() {
 				Name:        "format",
 				Usage:       "output format",
 				Aliases:     []string{"f"},
-				DefaultText: "stylish",
+				Value:       defaultFormat,
+				DefaultText: defaultFormat,
 			},
 		},
 		Action: func(_ context.Context, cmd *cli.Command) error {
@@ -31,7 +35,9 @@ func main() {
 				return fmt.Errorf("%w: got %d", ErrExpectingTwoPaths, cmd.Args().Len())
 			}
 
-			diff, err := code.GenDiff(cmd.Args().Get(0), cmd.Args().Get(1))
+			format := cmd.String("format")
+
+			diff, err := code.GenDiff(cmd.Args().Get(0), cmd.Args().Get(1), format)
 			if err != nil {
 				return err
 			}

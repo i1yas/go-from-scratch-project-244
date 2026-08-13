@@ -1,6 +1,7 @@
 package code
 
 import (
+	"code/internal/diff"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -12,37 +13,37 @@ import (
 )
 
 func TestGenDiff(t *testing.T) {
-	t.Run("basic json", func(t *testing.T) {
-		input1, err := getFixturePath(t, "flat1.json")
+	t.Run("nested json files", func(t *testing.T) {
+		input1, err := getFixturePath(t, "nested1.json")
 		require.NoError(t, err)
 
-		input2, err := getFixturePath(t, "flat2.json")
+		input2, err := getFixturePath(t, "nested2.json")
 		require.NoError(t, err)
 
-		wantData, err := loadFixture(t, "flat1_flat2_result.txt")
+		wantData, err := loadFixture(t, "nested1_nested2_result.txt")
 		require.NoError(t, err)
 
 		want := strings.TrimSpace(string(wantData))
 
-		got, err := GenDiff(input1, input2)
+		got, err := GenDiff(input1, input2, diff.FormatStylish)
 		require.NoError(t, err)
 
 		assert.Equal(t, string(want), got)
 	})
 
-	t.Run("basic yaml", func(t *testing.T) {
-		input1, err := getFixturePath(t, "flat1.yaml")
+	t.Run("nested yaml files", func(t *testing.T) {
+		input1, err := getFixturePath(t, "nested1.yaml")
 		require.NoError(t, err)
 
-		input2, err := getFixturePath(t, "flat2.yaml")
+		input2, err := getFixturePath(t, "nested2.yaml")
 		require.NoError(t, err)
 
-		wantData, err := loadFixture(t, "flat1_flat2_result.txt")
+		wantData, err := loadFixture(t, "nested1_nested2_result.txt")
 		require.NoError(t, err)
 
 		want := strings.TrimSpace(string(wantData))
 
-		got, err := GenDiff(input1, input2)
+		got, err := GenDiff(input1, input2, diff.FormatStylish)
 		require.NoError(t, err)
 
 		assert.Equal(t, string(want), got)
@@ -52,13 +53,13 @@ func TestGenDiff(t *testing.T) {
 		badInput, err := getFixturePath(t, "this_file_does_not_exist")
 		require.NoError(t, err)
 
-		input, err := getFixturePath(t, "flat1.json")
+		input, err := getFixturePath(t, "nested1.json")
 		require.NoError(t, err)
 
-		_, err = GenDiff(badInput, input)
+		_, err = GenDiff(badInput, input, diff.FormatStylish)
 		require.Error(t, err)
 
-		_, err = GenDiff(input, badInput)
+		_, err = GenDiff(input, badInput, diff.FormatStylish)
 		require.Error(t, err)
 	})
 
@@ -66,13 +67,13 @@ func TestGenDiff(t *testing.T) {
 		badInput, err := getFixturePath(t, ".")
 		require.NoError(t, err)
 
-		input, err := getFixturePath(t, "flat1.json")
+		input, err := getFixturePath(t, "nested1.json")
 		require.NoError(t, err)
 
-		_, err = GenDiff(badInput, input)
+		_, err = GenDiff(badInput, input, diff.FormatStylish)
 		require.Error(t, err)
 
-		_, err = GenDiff(input, badInput)
+		_, err = GenDiff(input, badInput, diff.FormatStylish)
 		require.Error(t, err)
 	})
 }
