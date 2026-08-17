@@ -135,6 +135,6 @@ type brokenWriter struct {
 	err error
 }
 
-func (w *brokenWriter) Write(p []byte) (n int, err error) {
+func (w *brokenWriter) Write([]byte) (n int, err error) {
 	return 0, w.err
 }
