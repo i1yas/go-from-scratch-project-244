@@ -10,17 +10,19 @@ type ItemChange int
 
 // ItemChange option
 const (
-	ItemChangeNone = iota
+	ItemChangeNone ItemChange = iota
 	ItemChangeAdd
 	ItemChangeRemove
+	ItemChangeReplace
 )
 
 // Item is item of internal diff representation
 type Item struct {
-	Key    string
-	Value  any
-	Change ItemChange
-	Nested *[]Item
+	Key      string
+	OldValue any
+	NewValue any
+	Change   ItemChange
+	Nested   *[]Item
 }
 
 // ComputeDiff computes diff and returns internal representation
@@ -41,9 +43,9 @@ func computeMapsDiff(a, b map[string]any) []Item {
 
 		if !ok1 {
 			result = append(result, Item{
-				Key:    k,
-				Value:  v2,
-				Change: ItemChangeAdd,
+				Key:      k,
+				NewValue: v2,
+				Change:   ItemChangeAdd,
 			})
 
 			continue
@@ -51,9 +53,9 @@ func computeMapsDiff(a, b map[string]any) []Item {
 
 		if !ok2 {
 			result = append(result, Item{
-				Key:    k,
-				Value:  v1,
-				Change: ItemChangeRemove,
+				Key:      k,
+				OldValue: v1,
+				Change:   ItemChangeRemove,
 			})
 
 			continue
@@ -64,15 +66,10 @@ func computeMapsDiff(a, b map[string]any) []Item {
 
 		if kind1 != kind2 {
 			result = append(result, Item{
-				Key:    k,
-				Value:  v1,
-				Change: ItemChangeRemove,
-			})
-
-			result = append(result, Item{
-				Key:    k,
-				Value:  v2,
-				Change: ItemChangeAdd,
+				Key:      k,
+				Change:   ItemChangeReplace,
+				OldValue: v1,
+				NewValue: v2,
 			})
 
 			continue
@@ -84,18 +81,7 @@ func computeMapsDiff(a, b map[string]any) []Item {
 			subDiff := computeMapsDiff(map1, map2)
 			result = append(result, Item{
 				Key:    k,
-				Nested: &subDiff,
-			})
-
-			continue
-		}
-
-		if kind1 == reflect.Slice {
-			slice1 := v1.([]any)
-			slice2 := v2.([]any)
-			subDiff := computeSlicesDiff(slice1, slice2)
-			result = append(result, Item{
-				Key:    k,
+				Change: ItemChangeNone,
 				Nested: &subDiff,
 			})
 
@@ -104,34 +90,21 @@ func computeMapsDiff(a, b map[string]any) []Item {
 
 		if v1 != v2 {
 			result = append(result, Item{
-				Key:    k,
-				Value:  v1,
-				Change: ItemChangeRemove,
-			})
-
-			result = append(result, Item{
-				Key:    k,
-				Value:  v2,
-				Change: ItemChangeAdd,
+				Key:      k,
+				OldValue: v1,
+				NewValue: v2,
+				Change:   ItemChangeReplace,
 			})
 
 			continue
 		}
 
 		result = append(result, Item{
-			Key:    k,
-			Value:  v1,
-			Change: ItemChangeNone,
+			Key:      k,
+			OldValue: v1,
+			Change:   ItemChangeNone,
 		})
 	}
-
-	return result
-}
-
-func computeSlicesDiff(a, b []any) []Item {
-	result := make([]Item, 0, len(a)+len(b))
-
-	// TODO
 
 	return result
 }

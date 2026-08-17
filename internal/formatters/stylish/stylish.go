@@ -1,38 +1,73 @@
 package stylish
 
 import (
-	"code/internal/diff"
 	"fmt"
 	"reflect"
+	"slices"
 	"strings"
+
+	"code/internal/diff"
+)
+
+const (
+	changeSymbolAdd    = '+'
+	changeSymbolRemove = '-'
+	changeSymbolNone   = ' '
 )
 
 func Format(diff []diff.Item) string {
 	return formatMapsDiff(diff, 0)
 }
 
-func formatMapsDiff(diff []diff.Item, nesting int) string {
+func formatMapsDiff(df []diff.Item, nesting int) string {
 	var sb strings.Builder
 
-	sb.WriteString("{\n")
+	sb.WriteString(formatMapOpen())
 
-	for _, item := range diff {
-		sb.WriteString(strings.Repeat(" ", 4*nesting))
-		sb.WriteString("  ")
-		sb.WriteString(getChangeSymbol(item.Change))
-		sb.WriteString(" ")
-
+	for _, item := range df {
 		if item.Nested != nil {
-			fmt.Fprintf(&sb, "%s: %s", item.Key, formatMapsDiff(*item.Nested, nesting+1))
-		} else {
-			fmt.Fprintf(&sb, "%s: %s", item.Key, formatValue(item.Value, nesting+1))
+			value := formatMapsDiff(*item.Nested, nesting+1)
+			row := foramtMapKeyValueRow(changeSymbolNone, item.Key, value, nesting)
+			sb.WriteString(row)
+
+			continue
 		}
 
-		sb.WriteString("\n")
+		if item.Change == diff.ItemChangeAdd {
+			value := formatValue(item.NewValue, nesting+1)
+			row := foramtMapKeyValueRow(changeSymbolAdd, item.Key, value, nesting)
+			sb.WriteString(row)
+
+			continue
+		}
+
+		if item.Change == diff.ItemChangeRemove {
+			value := formatValue(item.OldValue, nesting+1)
+			row := foramtMapKeyValueRow(changeSymbolRemove, item.Key, value, nesting)
+			sb.WriteString(row)
+
+			continue
+		}
+
+		if item.Change == diff.ItemChangeReplace {
+			oldValue := formatValue(item.OldValue, nesting+1)
+			newValue := formatValue(item.NewValue, nesting+1)
+
+			oldRow := foramtMapKeyValueRow(changeSymbolRemove, item.Key, oldValue, nesting)
+			newRow := foramtMapKeyValueRow(changeSymbolAdd, item.Key, newValue, nesting)
+
+			sb.WriteString(oldRow)
+			sb.WriteString(newRow)
+
+			continue
+		}
+
+		value := formatValue(item.OldValue, nesting+1)
+		row := foramtMapKeyValueRow(changeSymbolNone, item.Key, value, nesting)
+		sb.WriteString(row)
 	}
 
-	sb.WriteString(strings.Repeat(" ", 4*nesting))
-	sb.WriteString("}")
+	sb.WriteString(formatMapClose(nesting))
 
 	return sb.String()
 }
@@ -60,20 +95,39 @@ func formatValue(value any, nesting int) string {
 func formatMap(value map[string]any, nesting int) string {
 	var sb strings.Builder
 
-	sb.WriteString("{\n")
+	sb.WriteString(formatMapOpen())
 
-	for k, v := range value {
-		sb.WriteString(strings.Repeat(" ", 4*(nesting+1)))
-
-		fmt.Fprintf(&sb, "%s: %s", k, formatValue(v, nesting+1))
-
-		sb.WriteString("\n")
+	keys := make([]string, 0, len(value))
+	for k := range value {
+		keys = append(keys, k)
 	}
 
-	sb.WriteString(strings.Repeat(" ", 4*nesting))
-	sb.WriteString("}")
+	slices.Sort(keys)
+
+	for _, k := range keys {
+		v := value[k]
+
+		value := formatValue(v, nesting+1)
+		row := foramtMapKeyValueRow(changeSymbolNone, k, value, nesting)
+		sb.WriteString(row)
+	}
+
+	sb.WriteString(formatMapClose(nesting))
 
 	return sb.String()
+}
+
+func formatMapOpen() string {
+	return "{\n"
+}
+
+func formatMapClose(nesting int) string {
+	return strings.Repeat(" ", 4*nesting) + "}"
+}
+
+func foramtMapKeyValueRow(changeSymbol rune, key string, value string, nesting int) string {
+	pad := strings.Repeat(" ", 4*nesting)
+	return fmt.Sprintf("%s  %c %s: %s\n", pad, changeSymbol, key, value)
 }
 
 func formatSlice(value []any, nesting int) string {
@@ -93,17 +147,4 @@ func formatSlice(value []any, nesting int) string {
 	sb.WriteString("]\n")
 
 	return sb.String()
-}
-
-func getChangeSymbol(change diff.ItemChange) string {
-	switch change {
-	case diff.ItemChangeAdd:
-		return "+"
-	case diff.ItemChangeRemove:
-		return "-"
-	case diff.ItemChangeNone:
-		return " "
-	default:
-		return " "
-	}
 }
