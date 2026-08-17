@@ -126,7 +126,7 @@ func formatMapClose(nesting int) string {
 	return strings.Repeat(" ", 4*nesting) + "}"
 }
 
-func formatMapKeyValueRow(changeSymbol rune, key string, value string, nesting int) string {
+func formatMapKeyValueRow(changeSymbol rune, key, value string, nesting int) string {
 	pad := strings.Repeat(" ", 4*nesting)
 	return fmt.Sprintf("%s  %c %s: %s\n", pad, changeSymbol, key, value)
 }

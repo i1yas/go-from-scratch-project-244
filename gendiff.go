@@ -14,7 +14,7 @@ import (
 var ErrExpectingRegularFile = errors.New("expecting regular file")
 
 // GenDiff returns strings with json-like diff of two files
-func GenDiff(path1 string, path2 string, format string) (string, error) {
+func GenDiff(path1, path2, format string) (string, error) {
 	parsed1, err := parseFileFromArgument(path1)
 	if err != nil {
 		return "", err
