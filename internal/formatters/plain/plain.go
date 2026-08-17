@@ -1,10 +1,11 @@
 package plain
 
 import (
-	"code/internal/diff"
 	"fmt"
 	"reflect"
 	"strings"
+
+	"code/internal/diff"
 )
 
 // Format formats diff to flat format. Only changes shown in output.
