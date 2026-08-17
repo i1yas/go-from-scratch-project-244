@@ -15,6 +15,7 @@ const (
 	changeSymbolNone   = ' '
 )
 
+// Format formats diff to json-like, human-readable format.
 func Format(diff []diff.Item) string {
 	return formatMapsDiff(diff, 0)
 }

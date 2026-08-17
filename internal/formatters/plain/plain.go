@@ -7,6 +7,7 @@ import (
 	"strings"
 )
 
+// Format formats diff to flat format. Only changes shown in output.
 func Format(df []diff.Item) string {
 	result := format(df, []string{})
 	result = strings.TrimSpace(result)
