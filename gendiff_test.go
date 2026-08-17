@@ -21,7 +21,7 @@ func TestGenDiff(t *testing.T) {
 		input2, err := getFixturePath(t, "nested2.json")
 		require.NoError(t, err)
 
-		wantData, err := loadFixture(t, "nested1_nested2_result.txt")
+		wantData, err := loadFixture(t, "nested1_nested2_stylish.txt")
 		require.NoError(t, err)
 
 		want := strings.TrimSpace(string(wantData))
@@ -39,7 +39,7 @@ func TestGenDiff(t *testing.T) {
 		input2, err := getFixturePath(t, "nested2.yaml")
 		require.NoError(t, err)
 
-		wantData, err := loadFixture(t, "nested1_nested2_result.txt")
+		wantData, err := loadFixture(t, "nested1_nested2_stylish.txt")
 		require.NoError(t, err)
 
 		want := strings.TrimSpace(string(wantData))
