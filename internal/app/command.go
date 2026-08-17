@@ -47,7 +47,10 @@ func genDiffAction(_ context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	fmt.Fprintln(cmd.Root().Writer, diff)
+	_, err = fmt.Fprintln(cmd.Root().Writer, diff)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
