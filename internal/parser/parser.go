@@ -19,7 +19,10 @@ const (
 	FormatUnknown = "unknown"
 )
 
-var ErrUnsupportedFormat = errors.New("unsupported format")
+var (
+	ErrUnsupportedFormat = errors.New("unsupported format")
+	ErrFailedToParse     = errors.New("failed to parse")
+)
 
 const noExtensionMessage = "no extension"
 
@@ -33,7 +36,7 @@ func Parse(fileContent []byte, format Format) (any, error) {
 		return parseYAML(fileContent)
 	}
 
-	return map[string]any{}, fmt.Errorf("unsupported format '%s'", format)
+	return nil, fmt.Errorf("%w '%s'", ErrUnsupportedFormat, format)
 }
 
 func parseJSON(fileContent []byte) (any, error) {
@@ -41,7 +44,7 @@ func parseJSON(fileContent []byte) (any, error) {
 
 	err := json.Unmarshal(fileContent, &result)
 	if err != nil {
-		return result, fmt.Errorf("failed to parse json: %w", err)
+		return nil, fmt.Errorf("%w json: %w", ErrFailedToParse, err)
 	}
 
 	return result, nil
@@ -52,7 +55,7 @@ func parseYAML(fileContent []byte) (any, error) {
 
 	err := yaml.Unmarshal(fileContent, &result)
 	if err != nil {
-		return result, fmt.Errorf("failed to parse yaml: %w", err)
+		return nil, fmt.Errorf("%w yaml: %w", ErrFailedToParse, err)
 	}
 
 	return result, nil
