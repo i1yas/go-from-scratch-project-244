@@ -27,7 +27,7 @@ func formatMapsDiff(df []diff.Item, nesting int) string {
 	for _, item := range df {
 		if item.Nested != nil {
 			value := formatMapsDiff(*item.Nested, nesting+1)
-			row := FormatMapKeyValueRow(changeSymbolNone, item.Key, value, nesting)
+			row := formatMapKeyValueRow(changeSymbolNone, item.Key, value, nesting)
 			sb.WriteString(row)
 
 			continue
@@ -35,7 +35,7 @@ func formatMapsDiff(df []diff.Item, nesting int) string {
 
 		if item.Change == diff.ItemChangeAdd {
 			value := formatValue(item.NewValue, nesting+1)
-			row := FormatMapKeyValueRow(changeSymbolAdd, item.Key, value, nesting)
+			row := formatMapKeyValueRow(changeSymbolAdd, item.Key, value, nesting)
 			sb.WriteString(row)
 
 			continue
@@ -43,7 +43,7 @@ func formatMapsDiff(df []diff.Item, nesting int) string {
 
 		if item.Change == diff.ItemChangeRemove {
 			value := formatValue(item.OldValue, nesting+1)
-			row := FormatMapKeyValueRow(changeSymbolRemove, item.Key, value, nesting)
+			row := formatMapKeyValueRow(changeSymbolRemove, item.Key, value, nesting)
 			sb.WriteString(row)
 
 			continue
@@ -53,8 +53,8 @@ func formatMapsDiff(df []diff.Item, nesting int) string {
 			oldValue := formatValue(item.OldValue, nesting+1)
 			newValue := formatValue(item.NewValue, nesting+1)
 
-			oldRow := FormatMapKeyValueRow(changeSymbolRemove, item.Key, oldValue, nesting)
-			newRow := FormatMapKeyValueRow(changeSymbolAdd, item.Key, newValue, nesting)
+			oldRow := formatMapKeyValueRow(changeSymbolRemove, item.Key, oldValue, nesting)
+			newRow := formatMapKeyValueRow(changeSymbolAdd, item.Key, newValue, nesting)
 
 			sb.WriteString(oldRow)
 			sb.WriteString(newRow)
@@ -63,7 +63,7 @@ func formatMapsDiff(df []diff.Item, nesting int) string {
 		}
 
 		value := formatValue(item.OldValue, nesting+1)
-		row := FormatMapKeyValueRow(changeSymbolNone, item.Key, value, nesting)
+		row := formatMapKeyValueRow(changeSymbolNone, item.Key, value, nesting)
 		sb.WriteString(row)
 	}
 
@@ -108,7 +108,7 @@ func formatMap(value map[string]any, nesting int) string {
 		v := value[k]
 
 		value := formatValue(v, nesting+1)
-		row := FormatMapKeyValueRow(changeSymbolNone, k, value, nesting)
+		row := formatMapKeyValueRow(changeSymbolNone, k, value, nesting)
 		sb.WriteString(row)
 	}
 
@@ -125,7 +125,7 @@ func formatMapClose(nesting int) string {
 	return strings.Repeat(" ", 4*nesting) + "}"
 }
 
-func FormatMapKeyValueRow(changeSymbol rune, key string, value string, nesting int) string {
+func formatMapKeyValueRow(changeSymbol rune, key string, value string, nesting int) string {
 	pad := strings.Repeat(" ", 4*nesting)
 	return fmt.Sprintf("%s  %c %s: %s\n", pad, changeSymbol, key, value)
 }
