@@ -8,10 +8,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/urfave/cli/v3"
-
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/urfave/cli/v3"
 )
 
 func TestCommand(t *testing.T) {
@@ -101,10 +100,8 @@ func TestCommand(t *testing.T) {
 			} else {
 				assert.Equal(t, tc.output, outputBuf.String())
 			}
-
 		})
 	}
-
 }
 
 func TestCommand_FailedToPrint(t *testing.T) {
