@@ -32,5 +32,5 @@ func FormatDiff(diff []diff.Item, format string) (string, error) {
 		return json.Format(diff), nil
 	}
 
-	return "", fmt.Errorf("Unsupported format: %s", format)
+	return "", fmt.Errorf("unsupported format: %s", format)
 }
