@@ -8,6 +8,63 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestParse(t *testing.T) {
+	cases := []struct {
+		name        string
+		format      Format
+		input       string
+		want        any
+		err         error
+		errContains string
+	}{
+		{
+			name:   "valid json",
+			format: FormatJSON,
+			input:  `{"x":10.5}`,
+			want:   map[string]any{"x": 10.5},
+		},
+		{
+			name:   "valid yaml",
+			format: FormatYAML,
+			input:  `x: 10.5`,
+			want:   map[string]any{"x": 10.5},
+		},
+		{
+			name:        "error invalid json",
+			format:      FormatJSON,
+			input:       `{]`,
+			err:         ErrFailedToParse,
+			errContains: "json",
+		},
+		{
+			name:        "error invalid yaml",
+			format:      FormatYAML,
+			input:       `}{`,
+			err:         ErrFailedToParse,
+			errContains: "yaml",
+		},
+		{
+			name:   "error unsupported format",
+			format: FormatUnknown,
+			input:  `}{`,
+			err:    ErrUnsupportedFormat,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			got, err := Parse([]byte(tc.input), tc.format)
+
+			require.ErrorIs(t, err, tc.err)
+			assert.Equal(t, tc.want, got)
+
+			if len(tc.errContains) > 0 {
+				assert.ErrorContains(t, err, tc.errContains)
+			}
+		})
+	}
+}
+
 func TestDeduceFormatFromPath(t *testing.T) {
 	cases := []struct {
 		name        string
