@@ -144,7 +144,7 @@ func formatSlice(value []any, nesting int) string {
 	}
 
 	sb.WriteString(strings.Repeat(" ", 4*nesting))
-	sb.WriteString("]\n")
+	sb.WriteString("]")
 
 	return sb.String()
 }
