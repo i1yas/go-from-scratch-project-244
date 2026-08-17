@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	ErrExpectingTwoPaths    = errors.New("expecting 2 paths")
+	ErrExpectingTwoArgs     = errors.New("expecting 2 arguments")
 	ErrFailedToGenerateDiff = errors.New("failed to generate diff")
 	ErrFailedToPrintOutput  = errors.New("failed to write output")
 )
@@ -42,7 +42,7 @@ func BuildCommand() *cli.Command {
 
 func genDiffAction(_ context.Context, cmd *cli.Command) error {
 	if cmd.Args().Len() != 2 {
-		message := fmt.Sprintf("%s: got %d", ErrExpectingTwoPaths, cmd.Args().Len())
+		message := fmt.Sprintf("%s: got %d", ErrExpectingTwoArgs, cmd.Args().Len())
 		return cli.Exit(message, 1)
 	}
 
