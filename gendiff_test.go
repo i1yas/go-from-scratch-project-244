@@ -50,6 +50,24 @@ func TestGenDiff(t *testing.T) {
 		assert.Equal(t, string(want), got)
 	})
 
+	t.Run("plain format", func(t *testing.T) {
+		input1, err := getFixturePath(t, "nested1.json")
+		require.NoError(t, err)
+
+		input2, err := getFixturePath(t, "nested2.json")
+		require.NoError(t, err)
+
+		wantData, err := loadFixture(t, "nested1_nested2_plain.txt")
+		require.NoError(t, err)
+
+		want := strings.TrimSpace(string(wantData))
+
+		got, err := GenDiff(input1, input2, formatters.FormatPlain)
+		require.NoError(t, err)
+
+		assert.Equal(t, string(want), got)
+	})
+
 	t.Run("file does not exist", func(t *testing.T) {
 		badInput, err := getFixturePath(t, "this_file_does_not_exist")
 		require.NoError(t, err)
