@@ -67,5 +67,10 @@ func parseFileFromArgument(arg string) (map[string]any, error) {
 		return zero, err
 	}
 
-	return parsed, nil
+	parsedMap, ok := parsed.(map[string]any)
+	if !ok {
+		return zero, fmt.Errorf("expected map, but got something else")
+	}
+
+	return parsedMap, nil
 }

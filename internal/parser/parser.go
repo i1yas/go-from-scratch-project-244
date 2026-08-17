@@ -24,7 +24,7 @@ var ErrUnsupportedFormat = errors.New("unsupported format")
 const noExtensionMessage = "no extension"
 
 // Parse parses file content
-func Parse(fileContent []byte, format Format) (map[string]any, error) {
+func Parse(fileContent []byte, format Format) (any, error) {
 	if format == FormatJSON {
 		return parseJSON(fileContent)
 	}
@@ -36,8 +36,8 @@ func Parse(fileContent []byte, format Format) (map[string]any, error) {
 	return map[string]any{}, fmt.Errorf("unsupported format '%s'", format)
 }
 
-func parseJSON(fileContent []byte) (map[string]any, error) {
-	var result map[string]any
+func parseJSON(fileContent []byte) (any, error) {
+	var result any
 
 	err := json.Unmarshal(fileContent, &result)
 	if err != nil {
@@ -47,8 +47,8 @@ func parseJSON(fileContent []byte) (map[string]any, error) {
 	return result, nil
 }
 
-func parseYAML(fileContent []byte) (map[string]any, error) {
-	var result map[string]any
+func parseYAML(fileContent []byte) (any, error) {
+	var result any
 
 	err := yaml.Unmarshal(fileContent, &result)
 	if err != nil {
