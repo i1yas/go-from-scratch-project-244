@@ -1,6 +1,7 @@
 package code
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -66,6 +67,32 @@ func TestGenDiff(t *testing.T) {
 		require.NoError(t, err)
 
 		assert.Equal(t, string(want), got)
+	})
+
+	t.Run("json format", func(t *testing.T) {
+		input1, err := getFixturePath(t, "nested1.json")
+		require.NoError(t, err)
+
+		input2, err := getFixturePath(t, "nested2.json")
+		require.NoError(t, err)
+
+		wantData, err := loadFixture(t, "nested1_nested2_json.txt")
+		require.NoError(t, err)
+
+		var want []any
+
+		err = json.Unmarshal(wantData, &want)
+		require.NoError(t, err)
+
+		gotStr, err := GenDiff(input1, input2, formatters.FormatJSON)
+		require.NoError(t, err)
+
+		var got []any
+
+		err = json.Unmarshal([]byte(gotStr), &got)
+		require.NoError(t, err)
+
+		assert.Equal(t, want, got)
 	})
 
 	t.Run("file does not exist", func(t *testing.T) {
