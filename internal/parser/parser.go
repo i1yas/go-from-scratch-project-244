@@ -76,6 +76,6 @@ func DeduceFormatFromPath(path string) (Format, error) {
 			message = noExtensionMessage
 		}
 
-		return FormatUnknown, fmt.Errorf("%w: %s", ErrUnsupportedFormat, message)
+		return FormatUnknown, fmt.Errorf("%w: %s in '%s'", ErrUnsupportedFormat, message, path)
 	}
 }
