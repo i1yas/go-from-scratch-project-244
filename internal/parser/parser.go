@@ -21,6 +21,8 @@ const (
 
 var ErrUnsupportedFormat = errors.New("unsupported format")
 
+const noExtensionMessage = "no extension"
+
 // Parse parses file content
 func Parse(fileContent []byte, format Format) (map[string]any, error) {
 	if format == FormatJSON {
@@ -66,6 +68,11 @@ func DeduceFormatFromPath(path string) (Format, error) {
 	case ".yaml", ".yml":
 		return FormatYAML, nil
 	default:
-		return FormatUnknown, fmt.Errorf("%w: %s", ErrUnsupportedFormat, ext)
+		message := ext
+		if len(ext) == 0 {
+			message = noExtensionMessage
+		}
+
+		return FormatUnknown, fmt.Errorf("%w: %s", ErrUnsupportedFormat, message)
 	}
 }
