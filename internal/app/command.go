@@ -13,6 +13,7 @@ import (
 
 var ErrExpectingTwoPaths = errors.New("expecting 2 paths")
 
+// BuildCommand builds configured instance of cli.Command
 func BuildCommand() *cli.Command {
 	defaultFormat := formatters.FormatStylish
 
