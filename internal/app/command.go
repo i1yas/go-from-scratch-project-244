@@ -38,19 +38,20 @@ func BuildCommand() *cli.Command {
 
 func genDiffAction(_ context.Context, cmd *cli.Command) error {
 	if cmd.Args().Len() != 2 {
-		return fmt.Errorf("%w: got %d", ErrExpectingTwoPaths, cmd.Args().Len())
+		message := fmt.Sprintf("%s: got %d", ErrExpectingTwoPaths, cmd.Args().Len())
+		return cli.Exit(message, 1)
 	}
 
 	format := cmd.String("format")
 
 	diff, err := code.GenDiff(cmd.Args().Get(0), cmd.Args().Get(1), format)
 	if err != nil {
-		return err
+		return cli.Exit(err, 1)
 	}
 
 	_, err = fmt.Fprintln(cmd.Root().Writer, diff)
 	if err != nil {
-		return err
+		return cli.Exit(err, 1)
 	}
 
 	return nil
