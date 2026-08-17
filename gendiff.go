@@ -5,13 +5,22 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"reflect"
 
 	"code/internal/diff"
 	"code/internal/formatters"
 	"code/internal/parser"
 )
 
-var ErrExpectingRegularFile = errors.New("expecting regular file")
+var (
+	ErrFailedToBuildAbsPath = errors.New("failed to build absolute path")
+	ErrFailedToDeduceFormat = errors.New("failed to deduce format")
+	ErrFailedToGetFileInfo  = errors.New("failed to get file info")
+	ErrExpectingRegularFile = errors.New("expecting regular file")
+	ErrFailedToReadFile     = errors.New("failed to read file")
+	ErrFailedToParseFile    = errors.New("failed to parse file")
+	ErrExpectedMap          = errors.New("expected map")
+)
 
 // GenDiff returns strings with json-like diff of two files
 func GenDiff(path1, path2, format string) (string, error) {
@@ -40,17 +49,17 @@ func parseFileFromArgument(arg string) (map[string]any, error) {
 
 	path, err := filepath.Abs(arg)
 	if err != nil {
-		return zero, err
+		return zero, fmt.Errorf("%w: %w", ErrFailedToBuildAbsPath, err)
 	}
 
 	format, err := parser.DeduceFormatFromPath(path)
 	if err != nil {
-		return zero, err
+		return zero, fmt.Errorf("%w: %w", ErrFailedToDeduceFormat, err)
 	}
 
 	fileInfo, err := os.Lstat(path)
 	if err != nil {
-		return zero, err
+		return zero, fmt.Errorf("%w: %w", ErrFailedToGetFileInfo, err)
 	}
 
 	if !fileInfo.Mode().IsRegular() {
@@ -59,17 +68,18 @@ func parseFileFromArgument(arg string) (map[string]any, error) {
 
 	data, err := os.ReadFile(path)
 	if err != nil {
-		return zero, err
+		return zero, fmt.Errorf("%w: %w", ErrFailedToReadFile, err)
 	}
 
 	parsed, err := parser.Parse(data, format)
 	if err != nil {
-		return zero, err
+		return zero, fmt.Errorf("%w '%s': %w", ErrFailedToParseFile, path, err)
 	}
 
 	parsedMap, ok := parsed.(map[string]any)
 	if !ok {
-		return zero, fmt.Errorf("expected map, but got something else")
+		kind := reflect.ValueOf(parsed).Kind()
+		return zero, fmt.Errorf("%w in '%s', got %s", ErrExpectedMap, path, kind.String())
 	}
 
 	return parsedMap, nil
