@@ -88,6 +88,17 @@ func computeMapsDiff(a, b map[string]any) []Item {
 			continue
 		}
 
+		if kind1 == reflect.Slice {
+			result = append(result, Item{
+				Key:      k,
+				Change:   ItemChangeReplace,
+				OldValue: v1,
+				NewValue: v2,
+			})
+
+			continue
+		}
+
 		if v1 != v2 {
 			result = append(result, Item{
 				Key:      k,
