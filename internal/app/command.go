@@ -11,7 +11,11 @@ import (
 	"code/internal/formatters"
 )
 
-var ErrExpectingTwoPaths = errors.New("expecting 2 paths")
+var (
+	ErrExpectingTwoPaths    = errors.New("expecting 2 paths")
+	ErrFailedToGenerateDiff = errors.New("failed to generate diff")
+	ErrFailedToPrintOutput  = errors.New("failed to write output")
+)
 
 // BuildCommand builds configured instance of cli.Command
 func BuildCommand() *cli.Command {
@@ -46,12 +50,14 @@ func genDiffAction(_ context.Context, cmd *cli.Command) error {
 
 	diff, err := code.GenDiff(cmd.Args().Get(0), cmd.Args().Get(1), format)
 	if err != nil {
-		return cli.Exit(err, 1)
+		message := fmt.Sprintf("%s: %s", ErrFailedToGenerateDiff, err)
+		return cli.Exit(message, 1)
 	}
 
 	_, err = fmt.Fprintln(cmd.Root().Writer, diff)
 	if err != nil {
-		return cli.Exit(err, 1)
+		message := fmt.Sprintf("%s: %s", ErrFailedToPrintOutput, err)
+		return cli.Exit(message, 1)
 	}
 
 	return nil
