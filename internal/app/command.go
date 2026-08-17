@@ -41,7 +41,7 @@ func BuildCommand() *cli.Command {
 				return err
 			}
 
-			fmt.Println(diff)
+			fmt.Fprintln(cmd.Root().Writer, diff)
 
 			return nil
 		},
