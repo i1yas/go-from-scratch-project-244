@@ -8,7 +8,9 @@ linters:
     default: none
     enable:
         - errcheck
+        - errorlint
         - govet
+        - goconst
         - ineffassign
         - lll
         - revive
@@ -17,6 +19,21 @@ linters:
         - wsl_v5
 
     settings:
+        errorlint:
+            errorf: true
+            errorf-multi: true
+            asserts: true
+            comparison: true
+        lll:
+            line-length: 120
+            tab-width: 1
+        goconst:
+            min-len: 3
+            min-occurrences: 3 
+            match-constant: true
+            numbers: false
+            find-duplicates: false
+            ignore-tests: true
         revive:
             rules:
                 - name: blank-imports
@@ -26,6 +43,9 @@ linters:
 
                 - name: cyclomatic
                   arguments: [10]
+                  
+                - name: cognitive-complexity
+                  arguments: [15]
 
                 - name: dot-imports
                 - name: empty-block
@@ -36,6 +56,10 @@ linters:
                 - name: exported
                 - name: increment-decrement
                 - name: indent-error-flow
+                
+                - name: max-control-nesting
+                  arguments: [3]
+                
                 - name: range
                 - name: receiver-naming
                 - name: redefines-builtin-id
@@ -61,6 +85,7 @@ formatters:
     settings:
         gofumpt:
             module-path: code
+            extra-rules: true
         gci:
             sections:
                 - standard 
