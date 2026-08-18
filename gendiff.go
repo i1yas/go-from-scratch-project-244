@@ -20,6 +20,7 @@ var (
 	ErrFailedToReadFile     = errors.New("failed to read file")
 	ErrFailedToParseFile    = errors.New("failed to parse file")
 	ErrExpectedMap          = errors.New("expected map")
+	ErrFailedToFormatDiff   = errors.New("failed to format diff")
 )
 
 // GenDiff returns strings with json-like diff of two files
@@ -38,7 +39,7 @@ func GenDiff(path1, path2, format string) (string, error) {
 
 	diffFormatted, err := formatters.FormatDiff(diffRaw, format)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("%w: %w", ErrFailedToFormatDiff, err)
 	}
 
 	return diffFormatted, nil
