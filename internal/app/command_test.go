@@ -17,11 +17,11 @@ func TestCommand(t *testing.T) {
 	testdata, err := getTestdataPath()
 	require.NoError(t, err)
 
-	file1 := filepath.Join(testdata, "nested1.json")
-	file2 := filepath.Join(testdata, "nested2.json")
+	file1 := filepath.Join(testdata, "file1.json")
+	file2 := filepath.Join(testdata, "file2.json")
 
-	stylishResultPath := filepath.Join(testdata, "nested1_nested2_stylish.txt")
-	plainResultPath := filepath.Join(testdata, "nested1_nested2_plain.txt")
+	stylishResultPath := filepath.Join(testdata, "result_stylish.txt")
+	plainResultPath := filepath.Join(testdata, "result_plain.txt")
 
 	stylishResult, err := os.ReadFile(stylishResultPath)
 	require.NoError(t, err)
@@ -113,8 +113,8 @@ func TestCommand_FailedToPrint(t *testing.T) {
 	testdata, err := getTestdataPath()
 	require.NoError(t, err)
 
-	file1 := filepath.Join(testdata, "nested1.json")
-	file2 := filepath.Join(testdata, "nested2.json")
+	file1 := filepath.Join(testdata, "file1.json")
+	file2 := filepath.Join(testdata, "file2.json")
 
 	cmd.Writer = &output
 	cmd.ExitErrHandler = func(context.Context, *cli.Command, error) {

@@ -14,17 +14,17 @@ import (
 )
 
 func TestGenDiff(t *testing.T) {
-	jsonFile1 := getFixturePath(t, "nested1.json")
-	jsonFile2 := getFixturePath(t, "nested2.json")
+	jsonFile1 := getFixturePath(t, "file1.json")
+	jsonFile2 := getFixturePath(t, "file2.json")
 
-	yamlFile1 := getFixturePath(t, "nested1.yaml")
-	yamlFile2 := getFixturePath(t, "nested2.yaml")
+	yamlFile1 := getFixturePath(t, "file1.yaml")
+	yamlFile2 := getFixturePath(t, "file2.yaml")
 
 	arrayJSONFile := getFixturePath(t, "array.json")
 	invalidJSONFile := getFixturePath(t, "invalid.json")
 
-	stylishOutput := loadFixture(t, "nested1_nested2_stylish.txt")
-	plainOutput := loadFixture(t, "nested1_nested2_plain.txt")
+	stylishOutput := loadFixture(t, "result_stylish.txt")
+	plainOutput := loadFixture(t, "result_plain.txt")
 
 	cases := []struct {
 		name   string
@@ -107,12 +107,12 @@ func TestGenDiff(t *testing.T) {
 	}
 
 	t.Run("json files, json output", func(t *testing.T) {
-		jsonFile1 := getFixturePath(t, "nested1.json")
-		jsonFile2 := getFixturePath(t, "nested2.json")
+		jsonFile1 := getFixturePath(t, "file1.json")
+		jsonFile2 := getFixturePath(t, "file2.json")
 
 		var parsedWant, parsedGot any
 
-		want := loadFixture(t, "nested1_nested2_json.txt")
+		want := loadFixture(t, "result_json.txt")
 
 		err := json.Unmarshal([]byte(want), &parsedWant)
 		require.NoError(t, err)
