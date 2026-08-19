@@ -78,6 +78,7 @@ func computeMapsDiff(a, b map[string]any) []Item {
 		if kind1 == reflect.Map {
 			map1 := v1.(map[string]any)
 			map2 := v2.(map[string]any)
+
 			subDiff := computeMapsDiff(map1, map2)
 			result = append(result, Item{
 				Key:    k,
@@ -89,12 +90,11 @@ func computeMapsDiff(a, b map[string]any) []Item {
 		}
 
 		if kind1 == reflect.Slice {
-			result = append(result, Item{
-				Key:      k,
-				Change:   ItemChangeReplace,
-				OldValue: v1,
-				NewValue: v2,
-			})
+			s1 := v1.([]any)
+			s2 := v2.([]any)
+
+			diffItem := computeSlicesDiff(s1, s2, k)
+			result = append(result, diffItem)
 
 			continue
 		}
@@ -118,6 +118,25 @@ func computeMapsDiff(a, b map[string]any) []Item {
 	}
 
 	return result
+}
+
+func computeSlicesDiff(a, b []any, key string) Item {
+	isEqual := slices.Equal(a, b)
+
+	if isEqual {
+		return Item{
+			Key:      key,
+			Change:   ItemChangeNone,
+			OldValue: a,
+		}
+	}
+
+	return Item{
+		Key:      key,
+		Change:   ItemChangeReplace,
+		OldValue: a,
+		NewValue: b,
+	}
 }
 
 func getJoinedKeys(a, b map[string]any) []string {
