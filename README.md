@@ -119,3 +119,6 @@ Output (prettified):
     ]
 }
 ```
+
+## Example
+[![asciicast](https://asciinema.org/a/KiI5LYp84w3ZkJ2l.svg)](https://asciinema.org/a/KiI5LYp84w3ZkJ2l)
